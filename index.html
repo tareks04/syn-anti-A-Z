@@ -94,6 +94,9 @@
   body.dark .option-meaning-letter{background:#29254e;color:#c9c3ff}
   @media(max-width:540px){.option-meanings-grid{grid-template-columns:1fr}.option-meaning-card iframe{height:320px}}
 
+  /* Additive confirmation dialog for clearing the saved vocabulary. */
+  .delete-all-message{margin:8px 0 18px;color:var(--muted)}
+  .delete-all-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
 </style>
 </head>
 <body>
@@ -155,7 +158,7 @@ Antonyms: cowardly, timid
   <section class="panel" id="panel-words">
     <div class="card">
       <h2>আপনার শব্দভান্ডার</h2><p class="sub">শব্দ সার্চ করুন, সংশোধন করুন, বাংলা অর্থ খুঁজুন অথবা ব্যাকআপ নিন।</p>
-      <div class="toolbar"><input class="searchbox" id="wordSearch" placeholder="🔎 Main word / synonym / antonym / বাংলা অর্থ খুঁজুন..." /><select id="wordSort" class="searchbox" style="max-width:190px;flex:0 0 auto"><option value="az">A → Z</option><option value="za">Z → A</option><option value="new">সর্বশেষ যোগ করা</option></select><button class="btn" id="exportTxtBtn">TXT Export</button><button class="btn" id="exportJsonBtn">JSON Export</button></div>
+      <div class="toolbar"><input class="searchbox" id="wordSearch" placeholder="🔎 Main word / synonym / antonym / বাংলা অর্থ খুঁজুন..." /><select id="wordSort" class="searchbox" style="max-width:190px;flex:0 0 auto"><option value="az">A → Z</option><option value="za">Z → A</option><option value="new">সর্বশেষ যোগ করা</option></select><button class="btn" id="exportTxtBtn">TXT Export</button><button class="btn" id="exportJsonBtn">JSON Export</button><button class="btn danger" id="deleteAllWordsBtn" type="button">Delete All Words</button></div>
       <div id="wordList" class="word-list"></div>
     </div>
   </section>
@@ -186,7 +189,7 @@ Antonyms: cowardly, timid
       <div id="quizResult" style="display:none"></div>
     </div>
   </section>
-  <div class="footer">WordWise · Personal study tool · ডেটা আপনার ডিভাইসের ব্রাউজারে থাকে</div>
+  <div class="footer">|Content of TAREK|Copyrighted|</div>
 </main>
 <div class="toast" id="toast" role="status"></div>
 <div class="modal-bg" id="helpModal"><div class="modal"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>ব্যবহারবিধি</h2><button class="btn small" id="closeHelpBtn">✕ বন্ধ</button></div><p><b>১. হাতে শব্দ যোগ:</b> Main Word লিখুন, তারপর comma দিয়ে একাধিক synonym ও antonym লিখে সংরক্ষণ করুন।</p><p><b>২. TXT / JSON Import:</b> .txt ফাইল থেকে শব্দের তালিকা অথবা JSON Export করা ব্যাকআপ আপলোড করুন। এরপর “টেক্সট বিশ্লেষণ করুন” চাপুন, Preview দেখে Import করুন। JSON ব্যাকআপে learning progress থাকলে সেটিও restore হবে।</p><p><b>৩. MCQ:</b> পরীক্ষার ধরন ও প্রশ্নসংখ্যা বেছে Start চাপুন। একটি উত্তর বেছে নিলেই সঙ্গে সঙ্গে সঠিক/ভুল দেখাবে। উত্তর দেওয়ার পর চারটি অপশনের English-Bangla.com অভিধান খোলা যাবে। প্রতিটি শব্দের পাশের নিচের তীর চাপলে তার অভিধান খুলবে বা বন্ধ হবে—নতুন ট্যাব খুলবে না। আগের প্রশ্ন বাটনে আগের প্রশ্নে ফিরে উত্তর দেখতে পারবেন; পরের প্রশ্নে যেতেও পারবেন বা প্রশ্ন বাদ দিতে পারবেন।</p><p><b>৪. অটো Synonym/Antonym:</b> ইন্টারনেট থাকলে Datamuse থেকে সম্ভাব্য synonym/antonym খোঁজা যায়; ফলাফল যাচাই করে সংরক্ষণ করুন।</p><p><b>৫. পুনরাবৃত্তি:</b> ভুল হওয়া প্রশ্ন বারবার আসবে। ভুল প্রশ্ন টানা ৪ বার সঠিক করলে সেটি Corrected হিসেবে চিহ্নিত হবে। প্রতি ১০ প্রশ্নে লক্ষ্য অনুপাত New:Corrected:Mistaken = ৪:১:৫; কোনো শ্রেণিতে যথেষ্ট প্রশ্ন না থাকলে অন্য শ্রেণি দিয়ে পূরণ হবে।</p><p><b>৬. বাংলা অর্থ:</b> “বাংলা অর্থ খুঁজুন” চাপলে English-Bangla.com অভিধানের ফল এই সাইটের ভেতরেই দেখা যাবে। অভিধান থেকে অর্থ কপি করে নিচের ঘরে পেস্ট করে বসান/সংরক্ষণ করুন। ব্রাউজারের নিরাপত্তার কারণে বাইরের সাইটের লেখা সরাসরি স্বয়ংক্রিয়ভাবে পড়া যায় না।</p><p><b>৬. Backup:</b> JSON Export-এ শব্দ ও learning progress থাকে। পুনরুদ্ধার করতে একই Import জায়গায় .json ফাইল আপলোড করুন, Preview বিশ্লেষণ করে Import চাপুন। TXT Export শুধু শব্দের তালিকার জন্য। ব্রাউজারের ডেটা মুছে ফেললে সংরক্ষিত শব্দও হারাতে পারেন।</p><div class="actions"><button class="btn primary" id="closeHelpBtn2">বুঝেছি</button></div></div></div>
@@ -199,6 +202,16 @@ Antonyms: cowardly, timid
     <iframe class="dictionary-frame" id="dictionaryFrame" title="English-Bangla dictionary result" loading="lazy" referrerpolicy="no-referrer"></iframe>
     <div class="field"><label for="dictionaryMeaningPaste">বাংলা অর্থ — অভিধান থেকে কপি করে এখানে পেস্ট করুন</label><textarea id="dictionaryMeaningPaste" rows="2" placeholder="যেমন: প্রচুর; পর্যাপ্ত; অঢেল"></textarea><span class="hint">ব্রাউজারের নিরাপত্তার কারণে অন্য ওয়েবসাইটের পাতার লেখা স্বয়ংক্রিয়ভাবে পড়া যায় না; তাই অর্থটি পেস্ট করে সংরক্ষণ করতে হবে।</span></div>
     <div class="actions"><button class="btn primary" type="button" id="applyDictionaryMeaningBtn">এই অর্থটি বসান / সংরক্ষণ করুন</button><button class="btn" type="button" id="cancelDictionaryBtn">বাতিল</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="deleteAllWordsModal" role="presentation" aria-label="Delete all saved words confirmation">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteAllWordsTitle" aria-describedby="deleteAllWordsMessage">
+    <h2 id="deleteAllWordsTitle">Delete All Words?</h2>
+    <p class="delete-all-message" id="deleteAllWordsMessage">Are you sure you want to delete all words from your storage?</p>
+    <div class="delete-all-actions">
+      <button class="btn" id="cancelDeleteAllWordsBtn" type="button">No</button>
+      <button class="btn danger" id="confirmDeleteAllWordsBtn" type="button">Yes, delete all</button>
+    </div>
   </div>
 </div>
 
@@ -575,6 +588,26 @@ Antonyms: cowardly, timid
   function finishQuiz(){ $('quizPlay').style.display='none';$('quizResult').style.display='block';const total=quiz.questions.length,attempted=quiz.correct+quiz.wrong,pct=total?Math.round(quiz.correct/total*100):0;$('quizResult').innerHTML=`<div class="result"><div style="font-size:2.5rem">${pct>=80?'🏆':pct>=50?'📘':'💪'}</div><h2>পরীক্ষা সম্পন্ন!</h2><p class="sub">আপনার ফলাফল নিচে দেখুন। ভুলগুলো আবার অনুশীলন করলে আরও ভালো হবে।</p><div class="score-circle"><div><strong>${pct}%</strong><div style="font-size:.8rem;color:#747b91">সঠিক</div></div></div><div class="result-grid"><div class="result-cell"><strong style="color:#078653">${quiz.correct}</strong><small>সঠিক</small></div><div class="result-cell"><strong style="color:#bd2f43">${quiz.wrong}</strong><small>ভুল</small></div><div class="result-cell"><strong>${quiz.skipped}</strong><small>বাদ</small></div></div><p>মোট ${total}টি প্রশ্ন · উত্তর দিয়েছেন ${attempted}টি</p><div class="actions" style="justify-content:center"><button class="btn primary" id="retryQuizBtn">আবার পরীক্ষা দিন ↻</button><button class="btn" id="backSetupBtn">সেটিংসে ফিরুন</button></div></div>`;$('progressBar').style.width='100%';$('retryQuizBtn').addEventListener('click',startQuiz);$('backSetupBtn').addEventListener('click',()=>{$('quizResult').style.display='none';$('quizSetup').style.display='block';updateQuizReadiness();});}
 
   $('helpBtn').addEventListener('click',()=>$('helpModal').classList.add('show'));$('closeHelpBtn').addEventListener('click',()=>$('helpModal').classList.remove('show'));$('closeHelpBtn2').addEventListener('click',()=>$('helpModal').classList.remove('show'));$('helpModal').addEventListener('click',e=>{if(e.target===$('helpModal'))$('helpModal').classList.remove('show');});
+  // Delete All Words: a separate confirmation dialog; other site features remain unchanged.
+  function closeDeleteAllWordsDialog(){ $('deleteAllWordsModal').classList.remove('show'); }
+  $('deleteAllWordsBtn').addEventListener('click',()=>{
+    if(!words.length){toast('There are no saved words to delete.');return;}
+    $('deleteAllWordsModal').classList.add('show');
+    $('cancelDeleteAllWordsBtn').focus();
+  });
+  $('cancelDeleteAllWordsBtn').addEventListener('click',closeDeleteAllWordsDialog);
+  $('deleteAllWordsModal').addEventListener('click',e=>{if(e.target===$('deleteAllWordsModal'))closeDeleteAllWordsDialog();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('deleteAllWordsModal').classList.contains('show'))closeDeleteAllWordsDialog();});
+  $('confirmDeleteAllWordsBtn').addEventListener('click',()=>{
+    if(!words.length){closeDeleteAllWordsDialog();return;}
+    words=[];
+    saveWords();
+    if($('editId').value)resetForm();
+    renderAll();
+    closeDeleteAllWordsDialog();
+    toast('All saved words have been deleted.');
+  });
+
   renderAll();
 })();
 </script>
