@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0f172a" />
+<title>WordWise — Synonym & Antonym Studio</title>
+<style>
+  :root{--bg:#f4f7fb;--paper:#fff;--ink:#172033;--muted:#65718a;--line:#e4e9f2;--primary:#5146e5;--primary2:#3930b8;--mint:#dff8ed;--green:#087849;--red:#b42335;--rose:#ffeaed;--gold:#fff4d6;--shadow:0 12px 32px rgba(32,45,80,.08);--radius:18px}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali", "Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+  .topbar{background:linear-gradient(115deg,#111b38,#302a89 68%,#5146e5);color:#fff;padding:23px max(18px,calc((100vw - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:15px;background:#ffffff20;border:1px solid #ffffff35;display:grid;place-items:center;font-size:25px}.brand h1{margin:0;font-size:clamp(1.15rem,3vw,1.65rem);letter-spacing:-.3px}.brand p{margin:2px 0 0;color:#d7dcff;font-size:.88rem}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.top-actions .btn{border-color:#ffffff55;color:white;background:#ffffff12}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 55px}.notice{padding:12px 15px;background:#eef2ff;border:1px solid #dce2ff;color:#35316f;border-radius:13px;font-size:.92rem;margin-bottom:18px}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:21px}.stat{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 3px 12px #1b2a4d05}.stat .eyebrow{color:var(--muted);font-size:.84rem}.stat strong{font-size:1.8rem;display:block;margin-top:4px;letter-spacing:-.5px}.stat .mini{font-size:.78rem;color:#8791a5}
+  .tabs{display:flex;gap:7px;overflow-x:auto;padding:5px;margin:0 0 18px;background:#e9edf6;border-radius:14px}.tab{white-space:nowrap;border:0;background:transparent;padding:11px 16px;border-radius:10px;color:#59647b;font-weight:700}.tab.active{background:#fff;color:var(--primary);box-shadow:0 3px 10px #202d5010}
+  .panel{display:none}.panel.active{display:block}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.75fr);gap:18px}.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);min-width:0}.card h2{font-size:1.18rem;margin:0 0 6px}.sub{color:var(--muted);font-size:.9rem;margin:0 0 18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{font-weight:700;font-size:.9rem}.field input,.field textarea,.field select,.searchbox{border:1px solid #d7deeb;border-radius:11px;padding:11px 12px;background:#fbfcff;color:var(--ink);outline:none;width:100%}.field input:focus,.field textarea:focus,.field select:focus,.searchbox:focus{border-color:var(--primary);box-shadow:0 0 0 3px #5146e51a}.field textarea{min-height:92px;resize:vertical}.hint{font-size:.78rem;color:var(--muted)}.btn{border:1px solid #dce1ed;background:white;color:#303b55;padding:10px 14px;border-radius:11px;font-weight:700;transition:.15s}.btn:hover{transform:translateY(-1px);box-shadow:0 5px 15px #14244812}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary2)}.btn.soft{background:#eeedff;color:#4037c7;border-color:#e1deff}.btn.danger{background:#fff0f1;color:#a51f31;border-color:#ffd5da}.btn.small{padding:7px 10px;font-size:.84rem}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}.divider{height:1px;background:var(--line);margin:20px 0}.tip-box{border:1px dashed #ccd3e4;border-radius:13px;padding:14px;background:#fafbff;font-size:.88rem;color:#4f5d77}.tip-box strong{color:var(--ink)}.file-drop{border:1.5px dashed #c6cce0;background:#fafbff;border-radius:14px;padding:18px;text-align:center}.file-drop input{max-width:100%;margin-top:10px}.file-drop .big{font-size:1.8rem}.file-drop p{margin:5px 0;color:var(--muted);font-size:.88rem}
+  .import-preview{margin-top:13px;display:none}.preview-list{max-height:210px;overflow:auto;border:1px solid var(--line);border-radius:12px}.preview-item{padding:10px 12px;border-bottom:1px solid var(--line);font-size:.87rem}.preview-item:last-child{border-bottom:0}.preview-item b{display:block}.pill{display:inline-block;font-size:.75rem;border-radius:999px;padding:3px 8px;margin:3px 3px 0 0;background:#eef2ff;color:#4c45bb}.pill.green{background:#e1f8ed;color:#087849}.pill.red{background:#ffeaed;color:#aa2538}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.toolbar .searchbox{flex:1;min-width:180px}.word-list{display:grid;gap:11px}.word-card{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}.word-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.word-top h3{margin:0;font-size:1.08rem;overflow-wrap:anywhere}.word-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.word-card p{margin:9px 0 0;color:#4d5a73;font-size:.9rem;overflow-wrap:anywhere}.word-card .meaning{color:#087849;background:#f0fbf6;padding:7px 10px;border-radius:9px;display:inline-block}.empty{text-align:center;color:var(--muted);padding:35px 15px;border:1px dashed #d4daea;border-radius:14px}.empty .big{font-size:2rem}
+  .quiz-config{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.quiz-stage{max-width:800px;margin:0 auto}.quiz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.88rem}.progress{height:7px;background:#e9edf5;border-radius:999px;margin:12px 0 22px;overflow:hidden}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#5146e5,#8881ff);transition:width .2s}.question-card{border:1px solid var(--line);border-radius:20px;padding:clamp(19px,4vw,30px);background:linear-gradient(160deg,#fff,#fbfbff)}.q-type{display:inline-block;color:#4b43c6;background:#eeedff;border-radius:999px;padding:5px 10px;font-size:.78rem;font-weight:800;margin-bottom:12px}.question-card h2{font-size:clamp(1.25rem,3.5vw,1.7rem);line-height:1.45;margin:0 0 6px}.question-word{color:#453bd1}.question-card .q-hint{margin:0 0 20px;color:var(--muted);font-size:.9rem}.options{display:grid;grid-template-columns:1fr 1fr;gap:11px}.option{display:flex;align-items:center;gap:11px;text-align:left;min-height:61px;border:1px solid #dce2ef;border-radius:13px;padding:12px;background:white;color:var(--ink);font-weight:650;overflow-wrap:anywhere}.option .letter{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:#f0f2f8;color:#59647b;display:grid;place-items:center;font-size:.85rem}.option:hover:not(:disabled){border-color:#8c85ff;background:#faf9ff}.option.correct{border-color:#56c596;background:#eafaf3;color:#086e43}.option.correct .letter{background:#0c9160;color:#fff}.option.wrong{border-color:#f09aa4;background:#fff0f2;color:#9f1d2d}.option.wrong .letter{background:#c73548;color:white}.feedback{display:none;padding:14px 15px;border-radius:12px;margin-top:15px}.feedback.show{display:block}.feedback.good{background:#e7f9f0;border:1px solid #bcebd3;color:#096c43}.feedback.bad{background:#fff0f2;border:1px solid #ffd0d5;color:#992438}.feedback p{margin:4px 0 0}.quiz-bottom{display:flex;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-top:16px}.result{text-align:center;padding:30px 15px}.score-circle{width:136px;height:136px;border-radius:50%;border:9px solid #e6e4ff;display:grid;place-items:center;margin:18px auto;color:#4338ca;background:#faf9ff}.score-circle strong{font-size:2rem}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:530px;margin:22px auto}.result-cell{background:#f8f9fd;border:1px solid var(--line);padding:14px;border-radius:13px}.result-cell strong{font-size:1.35rem;display:block}.result-cell small{color:var(--muted)}.footer{text-align:center;margin-top:27px;color:#8791a5;font-size:.8rem}.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);background:#172033;color:#fff;padding:11px 16px;border-radius:12px;box-shadow:var(--shadow);z-index:99;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100% - 30px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-bg{position:fixed;inset:0;background:#0e17388c;display:none;align-items:center;justify-content:center;padding:18px;z-index:90}.modal-bg.show{display:flex}.modal{width:min(560px,100%);max-height:85vh;overflow:auto;background:white;border-radius:18px;padding:22px;box-shadow:0 25px 60px #0003}.modal h2{margin-top:0}.modal .field{margin-top:12px}
+  @media(max-width:820px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.quiz-config{grid-template-columns:1fr 1fr}.quiz-config .field:last-child{grid-column:1/-1}}
+  @media(max-width:540px){.topbar{padding:18px}.wrap{padding:15px 12px 38px}.card{padding:17px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.stats{gap:9px}.stat{padding:13px}.stat strong{font-size:1.5rem}.tab{padding:10px 12px}.options{grid-template-columns:1fr}.quiz-config{grid-template-columns:1fr}.quiz-config .field:last-child{grid-column:auto}.word-top{display:block}.word-actions{justify-content:flex-start;margin-top:10px}.result-grid{gap:6px}.result-cell{padding:10px 5px}}
+
+  /* Dark theme: enabled from the header and remembered in this browser. */
+  body.dark{--bg:#0b1220;--paper:#151e30;--ink:#edf2ff;--muted:#a8b4ca;--line:#303c53;--primary:#8077ff;--primary2:#655ce8;--mint:#16392f;--green:#83e5b8;--red:#ff8795;--rose:#3b202b;--gold:#3b3120;--shadow:0 12px 32px rgba(0,0,0,.22);color-scheme:dark}
+  body.dark .notice{background:#192542;border-color:#303f67;color:#dce5ff}
+  body.dark .tabs{background:#182236}
+  body.dark .tab{color:#b4bfd4}
+  body.dark .tab.active{background:#29334c;color:#c4bdff;box-shadow:0 3px 10px #0003}
+  body.dark .field input,body.dark .field textarea,body.dark .field select,body.dark .searchbox{background:#10192a;color:var(--ink);border-color:#39465e}
+  body.dark .btn:not(.primary):not(.soft):not(.danger){background:#202b40;color:#e6ecfa;border-color:#3b4963}
+  body.dark .top-actions .btn{background:#ffffff12;color:#fff;border-color:#ffffff55}
+  body.dark .btn.soft{background:#29254e;color:#d0cbff;border-color:#454077}
+  body.dark .btn.danger{background:#3b202b;color:#ffb2bc;border-color:#663341}
+  body.dark .tip-box{background:#111a2a;border-color:#39465e;color:#b6c1d5}
+  body.dark .file-drop{background:#111a2a;border-color:#39465e}
+  body.dark .preview-list{border-color:var(--line);background:#111a2a}
+  body.dark .preview-item{border-color:var(--line)}
+  body.dark .pill{background:#252d4b;color:#c9c5ff}
+  body.dark .pill.green{background:#153b30;color:#91ebc0}
+  body.dark .pill.red{background:#40212b;color:#ffacb7}
+  body.dark .word-card{background:var(--paper);border-color:var(--line)}
+  body.dark .word-card p{color:#bdc8db}
+  body.dark .word-card .meaning{background:#14362d;color:#8be4b9}
+  body.dark .empty{border-color:var(--line)}
+  body.dark .progress{background:#273248}
+  body.dark .question-card{background:linear-gradient(160deg,#182236,#111a2a);border-color:var(--line)}
+  body.dark .q-type{background:#29254e;color:#c9c3ff}
+  body.dark .question-word{color:#b7b0ff}
+  body.dark .option{background:#131d2e;color:var(--ink);border-color:#39465e}
+  body.dark .option .letter{background:#29344a;color:#d6deee}
+  body.dark .option:hover:not(:disabled){background:#202844;border-color:#7970ff}
+  body.dark .option.correct{background:#15382e;color:#9bf0c7;border-color:#287a5b}
+  body.dark .option.correct .letter{background:#16865b;color:#fff}
+  body.dark .option.wrong{background:#3b202b;color:#ffb1bd;border-color:#86404e}
+  body.dark .option.wrong .letter{background:#b8324b;color:#fff}
+  body.dark .feedback.good{background:#15382e;border-color:#287a5b;color:#a1f0cc}
+  body.dark .feedback.bad{background:#3b202b;border-color:#86404e;color:#ffb6c0}
+  body.dark .result-cell{background:#111a2a;border-color:var(--line)}
+  body.dark .score-circle{background:#191b38;border-color:#34305e;color:#c9c3ff}
+  body.dark .modal{background:var(--paper);color:var(--ink)}
+  body.dark details pre{background:#10192a!important;color:var(--ink)}
+  body.dark code{color:#dedaff}
+  body.dark .divider{background:var(--line)}
+  body.dark ::selection{background:#5146e5;color:white}
+
+
+  .dictionary-modal{width:min(1080px,100%);height:min(92vh,900px);max-height:92vh;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .dictionary-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex:0 0 auto}
+  .dictionary-modal-head h2{margin:0 0 4px}
+  .dictionary-modal-head .sub{margin:0}
+  .dictionary-frame{width:100%;flex:1 1 auto;min-height:220px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .dictionary-modal .field{flex:0 0 auto;margin-top:0}
+  .dictionary-modal textarea{min-height:64px;max-height:110px}
+  body.dark .dictionary-frame{background:#fff}
+  @media(max-width:540px){.dictionary-modal{padding:14px;height:94vh;max-height:94vh;gap:9px}.dictionary-frame{min-height:180px}.dictionary-modal .actions{margin-top:0}}
+
+  /* Expandable English-Bangla dictionary previews for every MCQ option. */
+  .option-meanings{margin-top:17px;padding-top:17px;border-top:1px solid var(--line)}
+  .option-meanings h3{font-size:1.05rem;margin:0 0 5px}
+  .option-meanings-intro{font-size:.84rem;color:var(--muted);margin:0 0 12px}
+  .option-meanings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .option-meaning-card{min-width:0;border:1px solid var(--line);border-radius:13px;padding:9px;background:var(--paper)}
+  .option-meaning-toggle{display:flex;align-items:center;gap:9px;width:100%;min-height:38px;padding:2px 3px;border:0;border-radius:8px;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+  .option-meaning-toggle:hover{background:var(--bg)}
+  .option-meaning-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+  .option-meaning-toggle b{flex:1;min-width:0;overflow-wrap:anywhere}
+  .option-meaning-letter{display:grid;place-items:center;flex:0 0 28px;height:28px;border-radius:8px;background:#eeedff;color:#4b43c6;font-weight:800;font-size:.82rem}
+  .option-meaning-chevron{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px;border-radius:8px;background:var(--bg);font-size:1.2rem;line-height:1;transition:transform .15s ease}
+  .option-meaning-toggle[aria-expanded="true"] .option-meaning-chevron{transform:rotate(180deg)}
+  .option-meaning-body{margin-top:9px}
+  .option-meaning-body[hidden]{display:none!important}
+  .option-meaning-card iframe{display:block;width:100%;height:340px;border:1px solid var(--line);border-radius:9px;background:#fff}
+  .option-meaning-source{font-size:.75rem;color:var(--muted);margin:7px 1px 0}
+  body.dark .option-meaning-letter{background:#29254e;color:#c9c3ff}
+  @media(max-width:540px){.option-meanings-grid{grid-template-columns:1fr}.option-meaning-card iframe{height:320px}}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">Aa</div><div><h1>WordWise <span style="font-weight:400;color:#d8dcff">/ শব্দভান্ডার ল্যাব</span></h1><p>Synonym · Antonym · বাংলা অর্থ · MCQ Practice</p></div></div>
+  <div class="top-actions"><button class="btn" id="themeToggleBtn" type="button" aria-pressed="false">🌙 Dark Mode</button><button class="btn" id="exportJsonTop">ডেটা Export ↗</button><button class="btn" id="helpBtn">ব্যবহারবিধি</button></div>
+</header>
+<main class="wrap">
+  <div class="notice">🔒 <b>আপনার শব্দগুলো এই ব্রাউজারেই সংরক্ষিত থাকবে।</b> আলাদা সার্ভার প্রয়োজন নেই। ব্রাউজারের ডেটা মুছে গেলে যেন তথ্য হারিয়ে না যায়, তাই মাঝে মাঝে JSON Export করে রাখুন।</div>
+  <section class="stats">
+    <div class="stat"><span class="eyebrow">মোট Main Word</span><strong id="statWords">0</strong><span class="mini">আপনার শব্দভান্ডার</span></div>
+    <div class="stat"><span class="eyebrow">Synonym</span><strong id="statSyn">0</strong><span class="mini">সংরক্ষিত সমার্থক শব্দ</span></div>
+    <div class="stat"><span class="eyebrow">Antonym</span><strong id="statAnt">0</strong><span class="mini">সংরক্ষিত বিপরীত শব্দ</span></div>
+    <div class="stat"><span class="eyebrow">MCQ-র জন্য প্রস্তুত</span><strong id="statReady">0</strong><span class="mini">যে শব্দ থেকে প্রশ্ন হতে পারে</span></div>
+  </section>
+  <nav class="tabs" aria-label="প্রধান মেনু">
+    <button class="tab active" data-tab="add">＋ শব্দ যোগ / Import</button>
+    <button class="tab" data-tab="words">▤ শব্দভান্ডার</button>
+    <button class="tab" data-tab="quiz">✓ MCQ পরীক্ষা</button>
+  </nav>
+
+  <section class="panel active" id="panel-add">
+    <div class="layout">
+      <div class="card">
+        <h2 id="formTitle">একটি শব্দ যোগ করুন</h2><p class="sub">Main word-এর সঙ্গে যত খুশি synonym ও antonym লিখুন। একই শব্দ আবার যোগ করলে তথ্য একত্র করা হবে।</p>
+        <form id="wordForm">
+          <input type="hidden" id="editId" />
+          <div class="form-grid">
+            <div class="field full"><label for="mainWord">Main Word / মূল শব্দ *</label><input id="mainWord" required maxlength="120" placeholder="যেমন: Abundant" autocomplete="off" /></div>
+            <div class="field"><label for="synonyms">Synonyms / সমার্থক শব্দ</label><textarea id="synonyms" placeholder="plentiful, ample, copious"></textarea><span class="hint">কমা, সেমিকোলন বা নতুন লাইনে আলাদা করুন</span></div>
+            <div class="field"><label for="antonyms">Antonyms / বিপরীত শব্দ</label><textarea id="antonyms" placeholder="scarce, limited, insufficient"></textarea><span class="hint">কমা, সেমিকোলন বা নতুন লাইনে আলাদা করুন</span></div>
+            <div class="field full"><label for="meaning">বাংলা অর্থ (ঐচ্ছিক)</label><input id="meaning" placeholder="যেমন: প্রচুর, পর্যাপ্ত" /></div>
+          </div>
+          <div class="actions"><button class="btn primary" type="submit" id="saveWordBtn">＋ শব্দ সংরক্ষণ</button><button class="btn" type="button" id="clearFormBtn">ফর্ম পরিষ্কার</button><button class="btn soft" type="button" id="meaningLookupBtn">বাংলা অর্থ খুঁজুন</button><button class="btn" type="button" id="autoWordsBtn">✨ Synonym/Antonym অটো খুঁজুন</button></div>
+        </form>
+        <div class="divider"></div>
+        <div class="tip-box"><strong>ভালো ফলের জন্য:</strong> প্রতিটি Main Word-এর অন্তত একটি synonym বা antonym দিন। MCQ-তে সঠিক উত্তর ওই শব্দের তালিকা থেকেই নেওয়া হবে; ভুল বিকল্প অন্য শব্দভান্ডার থেকে বাছাই করা হবে।</div>
+      </div>
+      <div class="card">
+        <h2>TXT / JSON ফাইল Import</h2><p class="sub">শব্দ যোগ করার জন্য .txt ফাইল অথবা আগে Export করা সম্পূর্ণ ব্যাকআপ ফেরত আনতে .json ফাইল আপলোড করুন। Import-এর আগে Preview দেখতে পারবেন।</p>
+        <div class="file-drop"><div class="big">📄</div><strong>TXT বা JSON ফাইল</strong><p>TXT শব্দের তালিকা, JSON ব্যাকআপ—দুটিই সমর্থিত</p><input type="file" id="textFile" accept=".txt,.json,text/plain,application/json" /></div>
+        <div class="field" style="margin-top:14px"><label for="importText">ফাইলের টেক্সট / Paste text</label><textarea id="importText" style="min-height:170px" placeholder="Main Word: Abundant&#10;Synonyms: plentiful, ample, copious&#10;Antonyms: scarce, limited&#10;বাংলা অর্থ: প্রচুর&#10;&#10;Main Word: Brave&#10;Synonyms: courageous, bold&#10;Antonyms: cowardly, timid"></textarea></div>
+        <div class="actions"><button class="btn" type="button" id="sampleBtn">নমুনা ফরম্যাট</button><button class="btn primary" type="button" id="previewBtn">টেক্সট বিশ্লেষণ করুন</button></div>
+        <div class="import-preview" id="importPreview"><div id="previewSummary" style="font-weight:750;margin:10px 0"></div><div class="preview-list" id="previewList"></div><div class="actions"><button class="btn primary" type="button" id="importBtn">✓ এই শব্দগুলো Import করুন</button><button class="btn" type="button" id="cancelImportBtn">বাতিল</button></div></div>
+        <div class="divider"></div>
+        <details><summary style="cursor:pointer;font-weight:700">সমর্থিত TXT ফরম্যাট দেখুন</summary><p class="hint">প্রতিটি শব্দের ব্লকে Main Word, Synonyms, Antonyms আলাদা লেবেলে দিন। একাধিক ব্লকের মাঝে ফাঁকা লাইন রাখুন। এছাড়া প্রতিটি লাইনে <code>word | synonym1, synonym2 | antonym1, antonym2 | বাংলা অর্থ</code> ফরম্যাটও চলবে।</p><pre style="white-space:pre-wrap;background:#f6f7fb;padding:12px;border-radius:10px;font-size:.82rem">Main Word: Abundant
+Synonyms: plentiful, ample, copious
+Antonyms: scarce, limited
+বাংলা অর্থ: প্রচুর
+
+Main Word: Brave
+Synonyms: courageous, bold
+Antonyms: cowardly, timid
+বাংলা অর্থ: সাহসী</pre></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-words">
+    <div class="card">
+      <h2>আপনার শব্দভান্ডার</h2><p class="sub">শব্দ সার্চ করুন, সংশোধন করুন, বাংলা অর্থ খুঁজুন অথবা ব্যাকআপ নিন।</p>
+      <div class="toolbar"><input class="searchbox" id="wordSearch" placeholder="🔎 Main word / synonym / antonym / বাংলা অর্থ খুঁজুন..." /><select id="wordSort" class="searchbox" style="max-width:190px;flex:0 0 auto"><option value="az">A → Z</option><option value="za">Z → A</option><option value="new">সর্বশেষ যোগ করা</option></select><button class="btn" id="exportTxtBtn">TXT Export</button><button class="btn" id="exportJsonBtn">JSON Export</button></div>
+      <div id="wordList" class="word-list"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-quiz">
+    <div class="card quiz-stage">
+      <div id="quizSetup">
+        <h2>নিজেকে পরীক্ষা করুন</h2><p class="sub">প্রতিটি MCQ-তে একটি অপশনে চাপ দিলেই সঙ্গে সঙ্গে উত্তর যাচাই করে সঠিক উত্তর দেখাবে।</p>
+        <div class="quiz-config">
+          <div class="field"><label for="quizType">প্রশ্নের ধরন</label><select id="quizType"><option value="mixed">Mixed — Synonym + Antonym</option><option value="synonym">শুধু Synonym</option><option value="antonym">শুধু Antonym</option></select></div>
+          <div class="field"><label for="quizCount">প্রশ্নের সংখ্যা</label><select id="quizCount"><option value="10">১০টি</option><option value="20">২০টি</option><option value="50">৫০টি</option><option value="all">সব প্রশ্ন</option></select></div>
+          <div class="field"><label for="quizOrder">প্রশ্ন সাজানো</label><select id="quizOrder"><option value="random">Random (এলোমেলো)</option><option value="az">A → Z</option></select></div>
+        </div>
+        <div class="tip-box" style="margin-top:18px" id="quizReadiness">প্রশ্ন তৈরি করতে প্রথমে Main Word-এর সঙ্গে synonym/antonym যোগ করুন।</div>
+        <div class="actions"><button class="btn primary" id="startQuizBtn">পরীক্ষা শুরু করুন →</button></div>
+      </div>
+      <div id="quizPlay" style="display:none">
+        <div class="quiz-head"><span id="quizProgressText">প্রশ্ন ১ / ১০</span><span>স্কোর: <b id="liveScore">0</b></span></div><div class="progress"><span id="progressBar"></span></div>
+        <div class="question-card"><span class="q-type" id="qTypeLabel">SYNONYM</span><h2 id="questionTitle">“abundant” শব্দের synonym কোনটি?</h2><p class="q-hint" id="questionHint">সঠিক উত্তরটি বেছে নিন।</p><div class="options" id="optionsBox"></div><div class="feedback" id="answerFeedback" aria-live="polite"></div>
+          <section class="option-meanings" id="optionMeanings" style="display:none" aria-live="polite">
+            <h3>চারটি অপশনের বাংলা অর্থ</h3>
+            <p class="option-meanings-intro">প্রতিটি শব্দের ডান পাশের নিচের তীর (⌄) চাপলে সেই শব্দের অভিধান খুলবে। আবার চাপলে বন্ধ হবে—নতুন ট্যাব খুলবে না।</p>
+            <div class="option-meanings-grid" id="optionMeaningsGrid"></div>
+          </section>
+        </div>
+        <div class="quiz-bottom"><button class="btn" id="previousQuestionBtn" disabled>← আগের প্রশ্ন</button><button class="btn" id="skipQuestionBtn">এটি বাদ দিন ↷</button><button class="btn primary" id="nextQuestionBtn" disabled>পরের প্রশ্ন →</button></div>
+      </div>
+      <div id="quizResult" style="display:none"></div>
+    </div>
+  </section>
+  <div class="footer">WordWise · Personal study tool · ডেটা আপনার ডিভাইসের ব্রাউজারে থাকে</div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-bg" id="helpModal"><div class="modal"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>ব্যবহারবিধি</h2><button class="btn small" id="closeHelpBtn">✕ বন্ধ</button></div><p><b>১. হাতে শব্দ যোগ:</b> Main Word লিখুন, তারপর comma দিয়ে একাধিক synonym ও antonym লিখে সংরক্ষণ করুন।</p><p><b>২. TXT / JSON Import:</b> .txt ফাইল থেকে শব্দের তালিকা অথবা JSON Export করা ব্যাকআপ আপলোড করুন। এরপর “টেক্সট বিশ্লেষণ করুন” চাপুন, Preview দেখে Import করুন। JSON ব্যাকআপে learning progress থাকলে সেটিও restore হবে।</p><p><b>৩. MCQ:</b> পরীক্ষার ধরন ও প্রশ্নসংখ্যা বেছে Start চাপুন। একটি উত্তর বেছে নিলেই সঙ্গে সঙ্গে সঠিক/ভুল দেখাবে। উত্তর দেওয়ার পর চারটি অপশনের English-Bangla.com অভিধান খোলা যাবে। প্রতিটি শব্দের পাশের নিচের তীর চাপলে তার অভিধান খুলবে বা বন্ধ হবে—নতুন ট্যাব খুলবে না। আগের প্রশ্ন বাটনে আগের প্রশ্নে ফিরে উত্তর দেখতে পারবেন; পরের প্রশ্নে যেতেও পারবেন বা প্রশ্ন বাদ দিতে পারবেন।</p><p><b>৪. অটো Synonym/Antonym:</b> ইন্টারনেট থাকলে Datamuse থেকে সম্ভাব্য synonym/antonym খোঁজা যায়; ফলাফল যাচাই করে সংরক্ষণ করুন।</p><p><b>৫. পুনরাবৃত্তি:</b> ভুল হওয়া প্রশ্ন বারবার আসবে। ভুল প্রশ্ন টানা ৪ বার সঠিক করলে সেটি Corrected হিসেবে চিহ্নিত হবে। প্রতি ১০ প্রশ্নে লক্ষ্য অনুপাত New:Corrected:Mistaken = ৪:১:৫; কোনো শ্রেণিতে যথেষ্ট প্রশ্ন না থাকলে অন্য শ্রেণি দিয়ে পূরণ হবে।</p><p><b>৬. বাংলা অর্থ:</b> “বাংলা অর্থ খুঁজুন” চাপলে English-Bangla.com অভিধানের ফল এই সাইটের ভেতরেই দেখা যাবে। অভিধান থেকে অর্থ কপি করে নিচের ঘরে পেস্ট করে বসান/সংরক্ষণ করুন। ব্রাউজারের নিরাপত্তার কারণে বাইরের সাইটের লেখা সরাসরি স্বয়ংক্রিয়ভাবে পড়া যায় না।</p><p><b>৬. Backup:</b> JSON Export-এ শব্দ ও learning progress থাকে। পুনরুদ্ধার করতে একই Import জায়গায় .json ফাইল আপলোড করুন, Preview বিশ্লেষণ করে Import চাপুন। TXT Export শুধু শব্দের তালিকার জন্য। ব্রাউজারের ডেটা মুছে ফেললে সংরক্ষিত শব্দও হারাতে পারেন।</p><div class="actions"><button class="btn primary" id="closeHelpBtn2">বুঝেছি</button></div></div></div>
+<div class="modal-bg" id="dictionaryModal" aria-label="English-Bangla dictionary lookup">
+  <div class="modal dictionary-modal" role="dialog" aria-modal="true" aria-labelledby="dictionaryModalTitle">
+    <div class="dictionary-modal-head">
+      <div><h2 id="dictionaryModalTitle">English-Bangla Dictionary</h2><p class="sub">অভিধানের পাতাটি এখানেই দেখা যাবে। অর্থ সংরক্ষণ করতে নিচের ঘরে অর্থটি পেস্ট করুন।</p></div>
+      <button class="btn small" type="button" id="closeDictionaryBtn">✕ বন্ধ</button>
+    </div>
+    <iframe class="dictionary-frame" id="dictionaryFrame" title="English-Bangla dictionary result" loading="lazy" referrerpolicy="no-referrer"></iframe>
+    <div class="field"><label for="dictionaryMeaningPaste">বাংলা অর্থ — অভিধান থেকে কপি করে এখানে পেস্ট করুন</label><textarea id="dictionaryMeaningPaste" rows="2" placeholder="যেমন: প্রচুর; পর্যাপ্ত; অঢেল"></textarea><span class="hint">ব্রাউজারের নিরাপত্তার কারণে অন্য ওয়েবসাইটের পাতার লেখা স্বয়ংক্রিয়ভাবে পড়া যায় না; তাই অর্থটি পেস্ট করে সংরক্ষণ করতে হবে।</span></div>
+    <div class="actions"><button class="btn primary" type="button" id="applyDictionaryMeaningBtn">এই অর্থটি বসান / সংরক্ষণ করুন</button><button class="btn" type="button" id="cancelDictionaryBtn">বাতিল</button></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const STORE_KEY = 'wordwise_vocab_v1';
+  const $ = (id) => document.getElementById(id);
+  let words = loadWords();
+  let importPreview = [];
+  let pendingLearningImport = null;
+  let quiz = {questions:[], index:0, correct:0, wrong:0, skipped:0, locked:false, answers:{}};
+  const PROGRESS_KEY='wordwise_learning_progress_v1';
+  let learning=loadLearning();
+  function loadLearning(){try{return JSON.parse(localStorage.getItem(PROGRESS_KEY)||'{}')||{};}catch(e){return {};}}
+  function saveLearning(){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(learning));}catch(e){}}
+  function qid(q){return norm(q.word)+'|'+q.type;}
+  function qstatus(q){const p=learning[qid(q)];return !p?'new':(p.status||'new');}
+  function recordAnswer(q,correct){const id=qid(q);let p=learning[id]||{status:'new',streak:0,seen:0,wrong:0};p.seen=(p.seen||0)+1;if(correct){if(p.status==='mistaken'){p.streak=(p.streak||0)+1;if(p.streak>=4){p.status='corrected';p.streak=0;}}else if(p.status!=='corrected'){p.status='seen';}}else{p.status='mistaken';p.streak=0;p.wrong=(p.wrong||0)+1;}p.lastSeen=Date.now();learning[id]=p;saveLearning();}
+  let toastTimer;
+
+  const THEME_KEY = 'wordwise_theme_v1';
+  function setTheme(isDark){
+    document.body.classList.toggle('dark', isDark);
+    const button = $('themeToggleBtn');
+    if(button){
+      button.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+      button.setAttribute('aria-pressed', String(isDark));
+      button.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if(themeColor) themeColor.content = isDark ? '#0b1220' : '#0f172a';
+    try { localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light'); } catch(e) {}
+  }
+  let storedDark = false;
+  try { storedDark = localStorage.getItem(THEME_KEY) === 'dark'; } catch(e) {}
+  setTheme(storedDark);
+  $('themeToggleBtn').addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+
+  function loadWords(){
+    try { const x = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); return Array.isArray(x) ? x.filter(w=>w && w.word) : []; }
+    catch(e){ return []; }
+  }
+  function saveWords(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(words)); } catch(e){ toast('সংরক্ষণ করা যায়নি। ব্রাউজার স্টোরেজ খালি করুন বা ডেটা Export করুন।'); } }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function norm(s){ return String(s||'').trim().toLocaleLowerCase(); }
+  // Capitalize only the first character for MCQ display; stored vocabulary remains unchanged.
+  function capitalizeFirst(value){ const text=String(value??''); return text ? text.charAt(0).toLocaleUpperCase()+text.slice(1) : text; }
+  function formatVocabList(values){ return (values||[]).map(capitalizeFirst).join(', ') || 'ডেটা যোগ করা হয়নি'; }
+  function cleanList(value){
+    if(Array.isArray(value)) value=value.join(',');
+    const out=[]; const seen=new Set();
+    String(value||'').split(/[\n,;，؛]+/).map(x=>x.trim().replace(/^[-•*\s]+|\s+$/g,'')).filter(Boolean).forEach(x=>{const k=norm(x);if(k&&!seen.has(k)){seen.add(k);out.push(x);}});
+    return out;
+  }
+  function mergeLists(a,b){ const out=[...(a||[])]; const seen=new Set(out.map(norm)); (b||[]).forEach(x=>{if(x && !seen.has(norm(x))){out.push(x);seen.add(norm(x));}}); return out; }
+  function upsert(incoming){
+    const word=String(incoming.word||'').trim(); if(!word) return false;
+    const idx=words.findIndex(w=>norm(w.word)===norm(word));
+    if(idx>=0){
+      words[idx].synonyms=mergeLists(words[idx].synonyms,cleanList(incoming.synonyms));
+      words[idx].antonyms=mergeLists(words[idx].antonyms,cleanList(incoming.antonyms));
+      if(incoming.meaning && !words[idx].meaning) words[idx].meaning=String(incoming.meaning).trim();
+      words[idx].updatedAt=Date.now();
+    } else {
+      words.push({id:uid(),word,synonyms:cleanList(incoming.synonyms),antonyms:cleanList(incoming.antonyms),meaning:String(incoming.meaning||'').trim(),createdAt:Date.now()});
+    }
+    return true;
+  }
+  function toast(msg){ const t=$('toast'); t.textContent=msg;t.classList.add('show'); clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800); }
+  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function shuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+  function switchTab(name){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));if(name==='words') renderWords(); if(name==='quiz') updateQuizReadiness();window.scrollTo({top:0,behavior:'smooth'});}
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+
+  function resetForm(){ $('editId').value='';$('wordForm').reset();$('formTitle').textContent='একটি শব্দ যোগ করুন';$('saveWordBtn').textContent='＋ শব্দ সংরক্ষণ'; }
+  $('clearFormBtn').addEventListener('click',resetForm);
+  $('wordForm').addEventListener('submit',e=>{
+    e.preventDefault();const word=$('mainWord').value.trim();if(!word)return;
+    const editId=$('editId').value;
+    if(editId){const idx=words.findIndex(w=>w.id===editId);if(idx>=0){words[idx].word=word;words[idx].synonyms=cleanList($('synonyms').value);words[idx].antonyms=cleanList($('antonyms').value);words[idx].meaning=$('meaning').value.trim();words[idx].updatedAt=Date.now();toast('শব্দের তথ্য আপডেট হয়েছে।');}}
+    else {upsert({word,synonyms:$('synonyms').value,antonyms:$('antonyms').value,meaning:$('meaning').value});toast('শব্দ সংরক্ষিত হয়েছে।');}
+    saveWords();renderAll();resetForm();
+  });
+  function editWord(id){const w=words.find(x=>x.id===id);if(!w)return;$('editId').value=w.id;$('mainWord').value=w.word;$('synonyms').value=(w.synonyms||[]).join(', ');$('antonyms').value=(w.antonyms||[]).join(', ');$('meaning').value=w.meaning||'';$('formTitle').textContent='শব্দ সংশোধন করুন';$('saveWordBtn').textContent='✓ পরিবর্তন সংরক্ষণ';switchTab('add');$('mainWord').focus();}
+  function deleteWord(id){const w=words.find(x=>x.id===id);if(!w)return;if(confirm(`“${w.word}” শব্দটি মুছে ফেলবেন?`)){words=words.filter(x=>x.id!==id);saveWords();renderAll();toast('শব্দ মুছে ফেলা হয়েছে।');}}
+
+  function renderStats(){const syn=words.reduce((n,w)=>n+(w.synonyms||[]).length,0),ant=words.reduce((n,w)=>n+(w.antonyms||[]).length,0),ready=words.filter(w=>(w.synonyms||[]).length||(w.antonyms||[]).length).length;$('statWords').textContent=words.length;$('statSyn').textContent=syn;$('statAnt').textContent=ant;$('statReady').textContent=ready;}
+  function renderAll(){renderStats();renderWords();updateQuizReadiness();}
+  function renderWords(){
+    const query=norm($('wordSearch').value);let list=[...words];
+    const sort=$('wordSort').value;if(sort==='az')list.sort((a,b)=>a.word.localeCompare(b.word));else if(sort==='za')list.sort((a,b)=>b.word.localeCompare(a.word));else list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    list=list.filter(w=>!query||[w.word,w.meaning,...(w.synonyms||[]),...(w.antonyms||[])].some(x=>norm(x).includes(query)));
+    const root=$('wordList');if(!list.length){root.innerHTML=`<div class="empty"><div class="big">📚</div><b>${words.length?'কোনো মিল পাওয়া যায়নি':'এখনো শব্দ যোগ করা হয়নি'}</b><p>${words.length?'অন্য শব্দ দিয়ে সার্চ করুন।':'“শব্দ যোগ / Import” ট্যাব থেকে শুরু করুন।'}</p></div>`;return;}
+    root.innerHTML=list.map(w=>`<article class="word-card"><div class="word-top"><div><h3>${esc(w.word)}</h3>${w.meaning?`<span class="meaning">${esc(w.meaning)}</span>`:''}</div><div class="word-actions"><button class="btn small" data-action="meaning" data-id="${esc(w.id)}">বাংলা অর্থ</button><button class="btn small" data-action="edit" data-id="${esc(w.id)}">Edit</button><button class="btn small danger" data-action="delete" data-id="${esc(w.id)}">Delete</button></div></div><p><b style="color:#137a53">Synonyms:</b> ${(w.synonyms||[]).length?(w.synonyms||[]).map(x=>`<span class="pill green">${esc(x)}</span>`).join(' '):'<span style="color:#939bad">যোগ করা হয়নি</span>'}</p><p><b style="color:#ad2a40">Antonyms:</b> ${(w.antonyms||[]).length?(w.antonyms||[]).map(x=>`<span class="pill red">${esc(x)}</span>`).join(' '):'<span style="color:#939bad">যোগ করা হয়নি</span>'}</p></article>`).join('');
+  }
+  $('wordList').addEventListener('click',e=>{const b=e.target.closest('button[data-action]');if(!b)return;const id=b.dataset.id;if(b.dataset.action==='edit')editWord(id);if(b.dataset.action==='delete')deleteWord(id);if(b.dataset.action==='meaning')lookupMeaning(id);});
+  $('wordSearch').addEventListener('input',renderWords);$('wordSort').addEventListener('change',renderWords);
+
+  function parseLabeled(text){
+    const result=[];const blocks=String(text).replace(/\r/g,'').split(/\n\s*\n+/).map(x=>x.trim()).filter(Boolean);
+    const labelRx=/^\s*(main\s*word|head\s*word|word|মূল\s*শব্দ|প্রধান\s*শব্দ|synonyms?|synonym\s*words?|সমার্থক\s*শব্দ(?:সমূহ)?|সমার্থক|antonyms?|antonym\s*words?|বিপরীত\s*শব্দ(?:সমূহ)?|বিপরীত|বাংলা\s*অর্থ|bangla\s*meaning|meaning|অর্থ)\s*[:：=\-]\s*(.*)$/i;
+    for(const block of blocks){
+      const item={word:'',synonyms:[],antonyms:[],meaning:''};let touched=false;let current='';
+      const lines=block.split('\n');
+      for(const line of lines){
+        const m=line.match(labelRx);
+        if(m){touched=true;const lab=norm(m[1]);const val=m[2].trim();
+          if(/^(main\s*word|head\s*word|word|মূল\s*শব্দ|প্রধান\s*শব্দ)$/.test(lab)){item.word=val;current='word';}
+          else if(/^(synonyms?|synonym\s*words?|সমার্থক\s*শব্দ(?:সমূহ)?|সমার্থক)$/.test(lab)){item.synonyms=mergeLists(item.synonyms,cleanList(val));current='synonyms';}
+          else if(/^(antonyms?|antonym\s*words?|বিপরীত\s*শব্দ(?:সমূহ)?|বিপরীত)$/.test(lab)){item.antonyms=mergeLists(item.antonyms,cleanList(val));current='antonyms';}
+          else {item.meaning=val;current='meaning';}
+        } else if(touched && line.trim()){
+          const val=line.trim().replace(/^[-•*]\s*/,'');if(current==='synonyms')item.synonyms=mergeLists(item.synonyms,cleanList(val));else if(current==='antonyms')item.antonyms=mergeLists(item.antonyms,cleanList(val));else if(current==='meaning')item.meaning+=(item.meaning?' ':'')+val;else if(!item.word)item.word=val;
+        }
+      }
+      if(touched&&item.word)result.push(item);
+    }
+    return result;
+  }
+  function parsePipe(text){
+    const result=[];
+    String(text).replace(/\r/g,'').split('\n').map(x=>x.trim()).filter(Boolean).forEach(line=>{
+      if(!line.includes('|'))return;const cols=line.split('|').map(x=>x.trim());if(cols.length<2)return;
+      let word=cols[0].replace(/^(?:main\s*word|word)\s*[:=]\s*/i,'').trim();
+      if(!word||/^(main\s*word|word|মূল\s*শব্দ)$/i.test(word))return;
+      result.push({word,synonyms:cleanList(cols[1]||''),antonyms:cleanList(cols[2]||''),meaning:cols.slice(3).join(' | ').trim()});
+    });return result;
+  }
+  function parseFlexible(text){
+    const labeled=parseLabeled(text);const pipe=parsePipe(text);const combined=[...labeled];
+    for(const p of pipe){if(!combined.some(x=>norm(x.word)===norm(p.word)))combined.push(p);else{const existing=combined.find(x=>norm(x.word)===norm(p.word));existing.synonyms=mergeLists(existing.synonyms,p.synonyms);existing.antonyms=mergeLists(existing.antonyms,p.antonyms);if(!existing.meaning)existing.meaning=p.meaning;}}
+    if(combined.length)return combined;
+    // Last-chance: common single-line syntax: Word - Synonyms: a, b; Antonyms: c, d
+    const lines=String(text).split(/\r?\n/);for(const line of lines){const m=line.match(/^\s*([^:|;]+?)\s*[-–—]\s*(.*)$/);if(!m)continue;const syn=(m[2].match(/(?:synonyms?|সমার্থক)\s*[:=]\s*([^;]+)/i)||[])[1]||'';const ant=(m[2].match(/(?:antonyms?|বিপরীত)\s*[:=]\s*([^;]+)/i)||[])[1]||'';if(syn||ant)combined.push({word:m[1].trim(),synonyms:cleanList(syn),antonyms:cleanList(ant),meaning:''});}
+    return combined;
+  }
+  $('textFile').addEventListener('change',async e=>{
+    const file=e.target.files&&e.target.files[0];if(!file)return;
+    try{
+      const content=await file.text();
+      if(/\.json$/i.test(file.name)||file.type==='application/json'){
+        const backup=JSON.parse(content);
+        const list=Array.isArray(backup)?backup:backup.words;
+        if(!Array.isArray(list))throw new Error('এই JSON ফাইলে WordWise words তালিকা পাওয়া যায়নি।');
+        const valid=list.filter(w=>w&&(w.word||w.mainWord));
+        if(!valid.length)throw new Error('JSON ফাইলে কোনো শব্দ পাওয়া যায়নি।');
+        $('importText').value=valid.map(w=>`Main Word: ${w.word||w.mainWord}\nSynonyms: ${(Array.isArray(w.synonyms)?w.synonyms:[w.synonyms||'']).join(', ')}\nAntonyms: ${(Array.isArray(w.antonyms)?w.antonyms:[w.antonyms||'']).join(', ')}${w.meaning?`\nবাংলা অর্থ: ${w.meaning}`:''}`).join('\n\n');
+        pendingLearningImport=backup.learning&&typeof backup.learning==='object'?backup.learning:null;
+        toast(`JSON ব্যাকআপ পড়া হয়েছে (${valid.length}টি শব্দ)। এখন “টেক্সট বিশ্লেষণ করুন” চাপুন।`);
+      }else if(/\.txt$/i.test(file.name)||file.type==='text/plain'||!file.name.includes('.')){
+        $('importText').value=content;pendingLearningImport=null;toast('TXT ফাইল পড়া হয়েছে। এখন বিশ্লেষণ করুন।');
+      }else{throw new Error('শুধু .txt অথবা WordWise .json ব্যাকআপ ফাইল ব্যবহার করুন।');}
+      $('importPreview').style.display='none';
+    }catch(err){pendingLearningImport=null;toast('ফাইল পড়া যায়নি: '+(err.message||'ফাইলের ফরম্যাট পরীক্ষা করুন।'));}
+  });
+  $('sampleBtn').addEventListener('click',()=>{$('importText').value='Main Word: Abundant\nSynonyms: plentiful, ample, copious\nAntonyms: scarce, limited, insufficient\nবাংলা অর্থ: প্রচুর\n\nMain Word: Brave\nSynonyms: courageous, bold, fearless\nAntonyms: cowardly, timid\nবাংলা অর্থ: সাহসী\n\nHonest | truthful, sincere, trustworthy | dishonest, deceitful | সৎ';$('importPreview').style.display='none';toast('নমুনা টেক্সট বসানো হয়েছে।');});
+  $('previewBtn').addEventListener('click',()=>{
+    const text=$('importText').value.trim();if(!text){toast('আগে TXT ফাইল আপলোড বা টেক্সট পেস্ট করুন।');return;}
+    importPreview=parseFlexible(text).filter(x=>x.word);
+    const dedup=[];for(const item of importPreview){const found=dedup.find(x=>norm(x.word)===norm(item.word));if(found){found.synonyms=mergeLists(found.synonyms,item.synonyms);found.antonyms=mergeLists(found.antonyms,item.antonyms);if(!found.meaning)found.meaning=item.meaning;}else dedup.push({...item,synonyms:cleanList(item.synonyms),antonyms:cleanList(item.antonyms)});}importPreview=dedup;
+    $('importPreview').style.display='block';$('previewSummary').textContent=`${importPreview.length}টি Main Word পাওয়া গেছে।`;const root=$('previewList');
+    if(!importPreview.length){root.innerHTML='<div class="preview-item">কোনো শব্দ শনাক্ত করা যায়নি। উপরের সমর্থিত ফরম্যাট অনুসরণ করুন।</div>';$('importBtn').disabled=true;return;}
+    root.innerHTML=importPreview.slice(0,100).map(w=>`<div class="preview-item"><b>${esc(w.word)}</b><span class="pill green">Synonyms: ${(w.synonyms||[]).length}</span><span class="pill red">Antonyms: ${(w.antonyms||[]).length}</span>${w.meaning?`<div style="color:#087849;margin-top:4px">${esc(w.meaning)}</div>`:''}<div style="color:#65718a;margin-top:3px">${esc((w.synonyms||[]).join(', ')||'—')} <span style="color:#b42335">| ${esc((w.antonyms||[]).join(', ')||'—')}</span></div></div>`).join('')+(importPreview.length>100?`<div class="preview-item">আরও ${importPreview.length-100}টি শব্দ আছে…</div>`:'');$('importBtn').disabled=false;
+  });
+  $('cancelImportBtn').addEventListener('click',()=>{$('importPreview').style.display='none';importPreview=[];});
+  $('importBtn').addEventListener('click',()=>{if(!importPreview.length)return;const n=importPreview.length;importPreview.forEach(upsert);saveWords();let restored=0;if(pendingLearningImport){for(const [k,v] of Object.entries(pendingLearningImport)){if(v&&typeof v==='object'){learning[k]=v;restored++;}}saveLearning();}pendingLearningImport=null;renderAll();$('importPreview').style.display='none';$('textFile').value='';toast(`${n}টি শব্দ Import হয়েছে।${restored?` ${restored}টি learning progress-ও restore হয়েছে।`:''} আগের শব্দ থাকলে তথ্য একত্র হয়েছে।`);switchTab('words');});
+
+  function downloadFile(filename,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);}
+  function exportJson(){downloadFile('wordwise-backup.json',JSON.stringify({app:'WordWise',version:1,exportedAt:new Date().toISOString(),words,learning},null,2),'application/json;charset=utf-8');toast('JSON ব্যাকআপ ডাউনলোড হচ্ছে।');}
+  function exportTxt(){const txt=words.map(w=>`Main Word: ${w.word}\nSynonyms: ${(w.synonyms||[]).join(', ')}\nAntonyms: ${(w.antonyms||[]).join(', ')}${w.meaning?'\nবাংলা অর্থ: '+w.meaning:''}`).join('\n\n');downloadFile('wordwise-words.txt','\uFEFF'+txt,'text/plain;charset=utf-8');toast('TXT ফাইল তৈরি হয়েছে।');}
+  $('exportJsonTop').addEventListener('click',exportJson);$('exportJsonBtn').addEventListener('click',exportJson);$('exportTxtBtn').addEventListener('click',exportTxt);
+  let dictionaryTargetId = null;
+  function openDictionaryLookup(word,targetId=null){
+    const query=String(word||'').trim();
+    if(!query){toast('আগে Main Word লিখুন।');$('mainWord').focus();return;}
+    dictionaryTargetId=targetId;
+    $('dictionaryModalTitle').textContent=`“${query}” — English-Bangla Dictionary`;
+    $('dictionaryMeaningPaste').value='';
+    $('dictionaryFrame').src='https://www.english-bangla.com/dictionary/'+encodeURIComponent(query.toLowerCase());
+    $('dictionaryModal').classList.add('show');
+  }
+  function closeDictionaryLookup(){
+    $('dictionaryModal').classList.remove('show');
+    $('dictionaryFrame').src='about:blank';
+  }
+  function applyDictionaryMeaning(){
+    const meaning=$('dictionaryMeaningPaste').value.trim();
+    if(!meaning){toast('আগে অভিধান থেকে বাংলা অর্থ কপি করে নিচের ঘরে পেস্ট করুন।');$('dictionaryMeaningPaste').focus();return;}
+    if(dictionaryTargetId){
+      const w=words.find(x=>x.id===dictionaryTargetId);
+      if(!w){toast('শব্দটি আর তালিকায় পাওয়া যাচ্ছে না।');closeDictionaryLookup();return;}
+      w.meaning=meaning;w.updatedAt=Date.now();saveWords();renderAll();toast(`“${w.word}” শব্দের বাংলা অর্থ সংরক্ষণ হয়েছে।`);
+    }else{
+      $('meaning').value=meaning;
+      toast('বাংলা অর্থ ফর্মে বসানো হয়েছে। সংরক্ষণ করতে “শব্দ সংরক্ষণ” চাপুন।');
+    }
+    closeDictionaryLookup();
+  }
+  function lookupMeaning(id){
+    const w=words.find(x=>x.id===id);if(!w)return;
+    openDictionaryLookup(w.word,w.id);
+  }
+  $('meaningLookupBtn').addEventListener('click',()=>openDictionaryLookup($('mainWord').value.trim(),null));
+  $('closeDictionaryBtn').addEventListener('click',closeDictionaryLookup);
+  $('cancelDictionaryBtn').addEventListener('click',closeDictionaryLookup);
+  $('applyDictionaryMeaningBtn').addEventListener('click',applyDictionaryMeaning);
+  $('dictionaryModal').addEventListener('click',e=>{if(e.target===$('dictionaryModal'))closeDictionaryLookup();});
+  async function datamuse(word,relation){const r=await fetch('https://api.datamuse.com/words?'+relation+'='+encodeURIComponent(word)+'&max=12');if(!r.ok)throw new Error('lookup failed');const data=await r.json();return data.map(x=>x.word).filter(x=>x&&norm(x)!==norm(word));}
+  $('autoWordsBtn').addEventListener('click',async()=>{const word=$('mainWord').value.trim();if(!word){toast('আগে Main Word লিখুন।');$('mainWord').focus();return;}const btn=$('autoWordsBtn');btn.disabled=true;btn.textContent='খোঁজা হচ্ছে…';try{const [syn,ant]=await Promise.allSettled([datamuse(word,'rel_syn'),datamuse(word,'rel_ant')]);if(syn.status==='fulfilled'&&syn.value.length)$('synonyms').value=mergeLists(cleanList($('synonyms').value),syn.value).join(', ');if(ant.status==='fulfilled'&&ant.value.length)$('antonyms').value=mergeLists(cleanList($('antonyms').value),ant.value).join(', ');if((syn.status==='fulfilled'&&syn.value.length)||(ant.status==='fulfilled'&&ant.value.length))toast('সম্ভাব্য synonym/antonym যোগ হয়েছে। যাচাই করে শব্দ সংরক্ষণ করুন।');else toast('ফল পাওয়া যায়নি। অন্য শব্দ চেষ্টা করুন বা ম্যানুয়ালি লিখুন।');}catch(e){toast('অটো শব্দ খুঁজতে ইন্টারনেট প্রয়োজন।');}finally{btn.disabled=false;btn.textContent='✨ Synonym/Antonym অটো খুঁজুন';}});
+
+  function buildQuestions(){
+    let eligible=words.filter(w=>((w.synonyms||[]).length>0)||((w.antonyms||[]).length>0));
+    if($('quizOrder').value==='az')eligible.sort((a,b)=>a.word.localeCompare(b.word));else eligible=shuffle(eligible);
+    const type=$('quizType').value;const allTerms=[];words.forEach(w=>{allTerms.push(w.word,...(w.synonyms||[]),...(w.antonyms||[]));});const uniqueTerms=[...new Map(allTerms.filter(Boolean).map(x=>[norm(x),x])).values()];
+    let questions=[];
+    eligible.forEach(w=>{
+      const types=type==='mixed'?shuffle(['synonym','antonym']).filter(t=>(t==='synonym'?(w.synonyms||[]).length:(w.antonyms||[]).length)): [type];
+      types.forEach(t=>{const correctList=t==='synonym'?(w.synonyms||[]):(w.antonyms||[]);if(!correctList.length)return;
+        const correct=correctList[Math.floor(Math.random()*correctList.length)];const forbidden=new Set([norm(w.word),...(w.synonyms||[]).map(norm),...(w.antonyms||[]).map(norm)]);
+        let distractors=shuffle(uniqueTerms.filter(x=>!forbidden.has(norm(x))&&norm(x)!==norm(correct))).slice(0,3);
+        if(distractors.length<3){const backups=shuffle(words.map(x=>x.word).filter(x=>!forbidden.has(norm(x))&&norm(x)!==norm(correct)&&!distractors.some(d=>norm(d)===norm(x))));distractors=mergeLists(distractors,backups).slice(0,3);}
+        if(distractors.length<3){['None of these','All of these','Not given'].forEach(x=>{if(distractors.length<3&&!forbidden.has(norm(x))&&norm(x)!==norm(correct))distractors.push(x);});}
+        const options=shuffle([correct,...distractors]);questions.push({word:w.word,type:t,correct,options,meaning:w.meaning||'',synonyms:[...(w.synonyms||[])],antonyms:[...(w.antonyms||[])]});
+      });
+    });
+    questions=scheduleQuestions(questions);
+    return questions;
+  }
+  function scheduleQuestions(all){
+    if(!all.length)return all;
+    const countSetting=$('quizCount').value;
+    const target=countSetting==='all'?all.length:Number(countSetting);
+    const pools={new:shuffle(all.filter(q=>qstatus(q)==='new')),corrected:shuffle(all.filter(q=>qstatus(q)==='corrected')),mistaken:shuffle(all.filter(q=>qstatus(q)==='mistaken')),seen:shuffle(all.filter(q=>qstatus(q)==='seen'))};
+    const usedUnique=new Set(),out=[];
+    function takeUnique(bucket){while(pools[bucket]&&pools[bucket].length){const q=pools[bucket].shift(),id=qid(q);if(!usedUnique.has(id)){usedUnique.add(id);return q;}}return null;}
+    function takeMistaken(){if(!pools.mistaken.length)return null;return pools.mistaken[Math.floor(Math.random()*pools.mistaken.length)];}
+    const slots=['new','new','new','new','corrected','mistaken','mistaken','mistaken','mistaken','mistaken'];
+    let guard=0;while(out.length<target&&guard++<target*3){let added=false;for(const slot of slots){if(out.length>=target)break;let q=slot==='mistaken'?takeMistaken():takeUnique(slot);if(!q)q=takeMistaken()||takeUnique('new')||takeUnique('corrected')||takeUnique('seen');if(!q){q=all.find(x=>!usedUnique.has(qid(x)));if(q)usedUnique.add(qid(q));}if(q){out.push(q);added=true;}}if(!added)break;}
+    return out;
+  }
+  function updateQuizReadiness(){const syn=words.filter(w=>(w.synonyms||[]).length).length,ant=words.filter(w=>(w.antonyms||[]).length).length;const type=$('quizType').value;let usable=type==='synonym'?syn:type==='antonym'?ant:(syn+ant);$('quizReadiness').innerHTML=`বর্তমানে <b>${words.length}</b>টি Main Word আছে। Synonym দেওয়া শব্দ <b>${syn}</b>টি, Antonym দেওয়া শব্দ <b>${ant}</b>টি। এই সেটিংসে আনুমানিক <b>${usable}</b> ধরনের প্রশ্ন তৈরি করা যাবে।`;const btn=$('startQuizBtn');btn.disabled=usable===0;}
+  $('quizType').addEventListener('change',updateQuizReadiness);$('quizCount').addEventListener('change',updateQuizReadiness);$('quizOrder').addEventListener('change',updateQuizReadiness);
+  function startQuiz(){
+    const questions=buildQuestions();
+    if(!questions.length){toast('এই সেটিংসে প্রশ্ন তৈরি হয়নি। শব্দের synonym/antonym যোগ করুন।');return;}
+    quiz={questions,index:0,correct:0,wrong:0,skipped:0,locked:false,answers:{}};
+    $('quizSetup').style.display='none';$('quizResult').style.display='none';$('quizPlay').style.display='block';renderQuestion();
+  }
+  $('startQuizBtn').addEventListener('click',startQuiz);
+
+  function renderQuestion(){
+    const q=quiz.questions[quiz.index];
+    if(!q){finishQuiz();return;}
+    const savedAnswer=quiz.answers[quiz.index] || null;
+    quiz.locked=Boolean(savedAnswer);
+    $('quizProgressText').textContent=`প্রশ্ন ${quiz.index+1} / ${quiz.questions.length}`;
+    $('liveScore').textContent=quiz.correct;
+    $('progressBar').style.width=(quiz.index/quiz.questions.length*100)+'%';
+    $('qTypeLabel').textContent=q.type==='synonym'?'SYNONYM / সমার্থক':'ANTONYM / বিপরীত';
+    // Capitalize the displayed main word without changing the saved vocabulary.
+    $('questionTitle').innerHTML=`“<span class="question-word">${esc(capitalizeFirst(q.word))}</span>” শব্দের ${q.type==='synonym'?'synonym (সমার্থক শব্দ)':'antonym (বিপরীত শব্দ)'} কোনটি?`;
+    $('questionHint').textContent=savedAnswer?'আগের প্রশ্নের উত্তর ও ব্যাখ্যা দেখানো হচ্ছে।':'সঠিক উত্তরটি বেছে নিন। উত্তর বাছাই করার পরই যাচাই দেখানো হবে।';
+    $('optionsBox').innerHTML=q.options.map((opt,i)=>`<button class="option" data-option="${i}"><span class="letter">${'ABCD'[i]}</span><span>${esc(capitalizeFirst(opt))}</span></button>`).join('');
+    $('answerFeedback').className='feedback';$('answerFeedback').innerHTML='';
+    $('optionMeanings').style.display='none';$('optionMeaningsGrid').innerHTML='';$('optionMeanings').dataset.questionKey='';
+    $('previousQuestionBtn').disabled=quiz.index===0;
+    $('nextQuestionBtn').disabled=!savedAnswer;
+    $('nextQuestionBtn').textContent=quiz.index===quiz.questions.length-1?'ফলাফল দেখুন →':'পরের প্রশ্ন →';
+    $('skipQuestionBtn').disabled=Boolean(savedAnswer);
+    if(savedAnswer) renderQuestionAnswer(q,savedAnswer);
+  }
+
+  function dictionaryEntryUrl(word){
+    const clean=String(word||'').trim().replace(/\s+/g,' ').toLowerCase();
+    return 'https://www.english-bangla.com/dictionary/'+encodeURIComponent(clean);
+  }
+
+  function renderOptionDictionaryMeanings(q){
+    const section=$('optionMeanings');
+    const key=norm(q.word)+'|'+q.type+'|'+q.options.map(norm).join('|');
+    if(section.dataset.questionKey===key && section.style.display!=='none')return;
+    section.dataset.questionKey=key;
+    $('optionMeaningsGrid').innerHTML=q.options.map((opt,i)=>{
+      const safeWord=esc(opt);
+      const src=esc(dictionaryEntryUrl(opt));
+      const bodyId=`option-dictionary-body-${i}`;
+      return `<article class="option-meaning-card">
+        <button class="option-meaning-toggle" type="button" data-option-meaning-toggle="${i}" aria-expanded="false" aria-controls="${bodyId}">
+          <span class="option-meaning-letter">${'ABCD'[i]}</span>
+          <b>${esc(capitalizeFirst(opt))}</b>
+          <span class="option-meaning-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="option-meaning-body" id="${bodyId}" hidden>
+          <iframe data-src="${src}" title="English-Bangla dictionary meaning for ${safeWord}" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          <p class="option-meaning-source">Source: English-Bangla.com · ${safeWord}</p>
+        </div>
+      </article>`;
+    }).join('');
+    section.style.display='block';
+  }
+
+  // Each option's dictionary opens only when its dropdown arrow is clicked.
+  $('optionMeaningsGrid').addEventListener('click',e=>{
+    const toggle=e.target.closest('button[data-option-meaning-toggle]');
+    if(!toggle)return;
+    const bodyId=toggle.getAttribute('aria-controls');
+    const body=$(bodyId);
+    if(!body)return;
+    const willOpen=toggle.getAttribute('aria-expanded')!=='true';
+    toggle.setAttribute('aria-expanded',String(willOpen));
+    body.hidden=!willOpen;
+    if(willOpen){
+      const frame=body.querySelector('iframe[data-src]');
+      if(frame){frame.src=frame.dataset.src;frame.removeAttribute('data-src');}
+    }
+  });
+
+  function renderQuestionAnswer(q,answer){
+    document.querySelectorAll('#optionsBox .option').forEach(b=>{
+      b.disabled=true;
+      const optionIndex=Number(b.dataset.option);
+      const val=q.options[optionIndex];
+      if(norm(val)===norm(q.correct))b.classList.add('correct');
+      if(!answer.skipped && answer.pickedIndex!==null && optionIndex===answer.pickedIndex && !answer.correct)b.classList.add('wrong');
+    });
+    const fb=$('answerFeedback');
+    fb.className='feedback show '+(answer.correct?'good':'bad');
+    const prog=learning[qid(q)]||{};
+    const statusLabel=prog.status==='corrected'?'Corrected ✓':prog.status==='mistaken'?`Mistaken · টানা সঠিক ${prog.streak||0}/4`:prog.status==='seen'?'Seen':'New';
+    const heading=answer.skipped?'প্রশ্নটি বাদ দেওয়া হয়েছিল।':answer.correct?'✓ সঠিক উত্তর!':'✕ উত্তরটি সঠিক নয়।';
+    fb.innerHTML=`<b>${heading}</b><p><strong>সঠিক উত্তর:</strong> ${esc(capitalizeFirst(q.correct))}</p><p><strong>সব Synonyms:</strong> ${esc(formatVocabList(q.synonyms))}</p><p><strong>সব Antonyms:</strong> ${esc(formatVocabList(q.antonyms))}</p>${q.meaning?`<p><strong>বাংলা অর্থ:</strong> ${esc(q.meaning)}</p>`:''}<p><strong>শেখার অবস্থা:</strong> ${esc(answer.skipped?'Mistaken':statusLabel)}</p>`;
+    renderOptionDictionaryMeanings(q);
+    $('nextQuestionBtn').disabled=false;
+    $('skipQuestionBtn').disabled=true;
+    $('liveScore').textContent=quiz.correct;
+  }
+
+  $('optionsBox').addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-option]');
+    if(!btn||quiz.locked)return;
+    const q=quiz.questions[quiz.index];
+    const pickedIndex=Number(btn.dataset.option);
+    const picked=q.options[pickedIndex];
+    const correct=norm(picked)===norm(q.correct);
+    quiz.locked=true;
+    quiz.answers[quiz.index]={pickedIndex,correct,skipped:false};
+    if(correct)quiz.correct++;else quiz.wrong++;
+    recordAnswer(q,correct);
+    renderQuestionAnswer(q,quiz.answers[quiz.index]);
+  });
+
+  $('skipQuestionBtn').addEventListener('click',()=>{
+    if(quiz.locked)return;
+    const q=quiz.questions[quiz.index];
+    quiz.skipped++;
+    quiz.locked=true;
+    quiz.answers[quiz.index]={pickedIndex:null,correct:false,skipped:true};
+    recordAnswer(q,false);
+    renderQuestionAnswer(q,quiz.answers[quiz.index]);
+  });
+
+  $('previousQuestionBtn').addEventListener('click',()=>{
+    if(quiz.index<=0)return;
+    quiz.index--;
+    renderQuestion();
+  });
+  $('nextQuestionBtn').addEventListener('click',()=>{
+    if(!quiz.answers[quiz.index])return;
+    if(quiz.index>=quiz.questions.length-1){finishQuiz();return;}
+    quiz.index++;
+    renderQuestion();
+  });
+  function finishQuiz(){ $('quizPlay').style.display='none';$('quizResult').style.display='block';const total=quiz.questions.length,attempted=quiz.correct+quiz.wrong,pct=total?Math.round(quiz.correct/total*100):0;$('quizResult').innerHTML=`<div class="result"><div style="font-size:2.5rem">${pct>=80?'🏆':pct>=50?'📘':'💪'}</div><h2>পরীক্ষা সম্পন্ন!</h2><p class="sub">আপনার ফলাফল নিচে দেখুন। ভুলগুলো আবার অনুশীলন করলে আরও ভালো হবে।</p><div class="score-circle"><div><strong>${pct}%</strong><div style="font-size:.8rem;color:#747b91">সঠিক</div></div></div><div class="result-grid"><div class="result-cell"><strong style="color:#078653">${quiz.correct}</strong><small>সঠিক</small></div><div class="result-cell"><strong style="color:#bd2f43">${quiz.wrong}</strong><small>ভুল</small></div><div class="result-cell"><strong>${quiz.skipped}</strong><small>বাদ</small></div></div><p>মোট ${total}টি প্রশ্ন · উত্তর দিয়েছেন ${attempted}টি</p><div class="actions" style="justify-content:center"><button class="btn primary" id="retryQuizBtn">আবার পরীক্ষা দিন ↻</button><button class="btn" id="backSetupBtn">সেটিংসে ফিরুন</button></div></div>`;$('progressBar').style.width='100%';$('retryQuizBtn').addEventListener('click',startQuiz);$('backSetupBtn').addEventListener('click',()=>{$('quizResult').style.display='none';$('quizSetup').style.display='block';updateQuizReadiness();});}
+
+  $('helpBtn').addEventListener('click',()=>$('helpModal').classList.add('show'));$('closeHelpBtn').addEventListener('click',()=>$('helpModal').classList.remove('show'));$('closeHelpBtn2').addEventListener('click',()=>$('helpModal').classList.remove('show'));$('helpModal').addEventListener('click',e=>{if(e.target===$('helpModal'))$('helpModal').classList.remove('show');});
+  renderAll();
+})();
+</script>
+</body>
+</html>
