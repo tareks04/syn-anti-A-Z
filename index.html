@@ -234,7 +234,7 @@ Antonyms: cowardly, timid
         <div class="question-card"><span class="q-type" id="qTypeLabel">SYNONYM</span><h2 id="questionTitle">“abundant” শব্দের synonym কোনটি?</h2><p class="q-hint" id="questionHint">সঠিক উত্তরটি বেছে নিন।</p><div class="options" id="optionsBox"></div><div class="feedback" id="answerFeedback" aria-live="polite"></div>
           <section class="option-meanings" id="optionMeanings" style="display:none" aria-live="polite">
             <h3>চারটি অপশনের বাংলা অর্থ</h3>
-            <p class="option-meanings-intro">প্রথমে মূল শব্দের অভিধান, তারপর চারটি অপশনের অভিধান—প্রতিটি শব্দের পাশের নিচের তীর (⌄) চাপলে খুলবে বা বন্ধ হবে। নতুন ট্যাব খুলবে না।</p>
+            <p class="option-meanings-intro">প্রথমে চারটি অপশনের অভিধান, তারপর শেষে মূল শব্দের অভিধান—প্রতিটি শব্দের পাশের নিচের তীর (⌄) চাপলে খুলবে বা বন্ধ হবে। নতুন ট্যাব খুলবে না।</p>
             <div class="option-meanings-grid" id="optionMeaningsGrid"></div>
           </section>
         </div>
@@ -689,7 +689,7 @@ Antonyms: cowardly, timid
     if(section.dataset.questionKey===key && section.style.display!=='none')return;
     section.dataset.questionKey=key;
 
-    // The Main Word dictionary is shown as the first collapsible card after the answer is submitted.
+    // The Main Word dictionary is shown as the fifth (last) collapsible card after the four MCQ options.
     const mainWordSafe=esc(q.word);
     const mainWordSrc=esc(dictionaryEntryUrl(q.word));
     const mainWordCard=`<article class="option-meaning-card option-main-word-card">
@@ -720,7 +720,7 @@ Antonyms: cowardly, timid
         </div>
       </article>`;
     }).join('');
-    $('optionMeaningsGrid').innerHTML=mainWordCard+optionCards;
+    $('optionMeaningsGrid').innerHTML=optionCards+mainWordCard;
     section.style.display='block';
   }
 
